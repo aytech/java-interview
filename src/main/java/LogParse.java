@@ -35,10 +35,11 @@ public class LogParse {
                 "2025-02-26T10:18:00,user123,PURCHASE",
                 "2025-02-26T10:25:00,user123,LOGOUT"
         );
-        Map<String, List<String>> actions = new HashMap<String, List<String>>();
+        Map<String, List<String>> actions = new LinkedHashMap<>();
         logs.stream()
                 .sorted((o1, o2) ->
                         LocalDateTime.parse(o1.split(",")[0]).compareTo(LocalDateTime.parse(o2.split(",")[0])))
+                .sorted((o1, o2) -> o1.split(",")[1].compareTo(o2.split(",")[1]))
                 .forEach(logItem -> {
                     String[] parts = logItem.split(",");
                     if (actions.containsKey(parts[1])) {
