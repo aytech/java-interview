@@ -35,6 +35,12 @@ public class LogParse {
                 "2025-02-26T10:18:00,user123,PURCHASE",
                 "2025-02-26T10:25:00,user123,LOGOUT"
         );
+        LogParse.byOleg(logs);
+        LogParse.byAndy(logs);
+        LogParse.byPolina(logs);
+    }
+
+    private static void byOleg(List<String> logs) {
         Map<String, List<String>> actions = new LinkedHashMap<>();
         logs.stream()
                 .sorted((o1, o2) ->
@@ -52,6 +58,42 @@ public class LogParse {
                         actions.put(parts[1], Collections.singletonList(parts[2]));
                     }
                 });
-        System.out.println(actions);
+        System.out.println("Oleg: " + actions);
+    }
+
+    private static void byAndy(List<String> logs) {
+        record Row(LocalDateTime timestamp, String user, String action) {
+            public static Row fromInput(String input) {
+                String[] parts = input.split(",");
+                return new Row(LocalDateTime.parse(parts[0]), parts[1], parts[2]);
+            }
+        }
+        Map<String, List<String>> map = new HashMap<>();
+        logs
+                .stream()
+                .map(Row::fromInput)
+                .sorted(Comparator.comparing(Row::timestamp))
+                .forEach(r -> map.computeIfAbsent(r.user, k -> new ArrayList<>()).add(r.action));
+        System.out.println(" Andy: " + map);
+    }
+
+    private static void byPolina(List<String> logs) {
+
+        Map<String, List<String>> map = new HashMap<>();
+        Collections.sort(logs);
+
+        for (String str : logs) {
+            String[] data = str.split(",");
+            String user = data[1];
+            String action = data[2];
+            if (!map.containsKey(user)) {
+                map.put(user, List.of(action));
+            } else {
+                List<String> actions = new ArrayList<>(map.get(user));
+                actions.add(action);
+                map.put(user, actions);
+            }
+        }
+        System.out.println("Polina: " + map);
     }
 }
