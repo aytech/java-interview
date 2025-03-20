@@ -43,9 +43,8 @@ public class LogParse {
     private static void byOleg(List<String> logs) {
         Map<String, List<String>> actions = new LinkedHashMap<>();
         logs.stream()
-                .sorted((o1, o2) ->
-                        LocalDateTime.parse(o1.split(",")[0]).compareTo(LocalDateTime.parse(o2.split(",")[0])))
-                .sorted((o1, o2) -> o1.split(",")[1].compareTo(o2.split(",")[1]))
+                .sorted(Comparator.comparing(o -> LocalDateTime.parse(o.split(",")[0])))
+                .sorted(Comparator.comparing(o -> o.split(",")[1]))
                 .forEach(logItem -> {
                     String[] parts = logItem.split(",");
                     if (actions.containsKey(parts[1])) {
