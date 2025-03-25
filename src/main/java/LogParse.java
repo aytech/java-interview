@@ -38,6 +38,8 @@ public class LogParse {
         LogParse.byOleg(logs);
         LogParse.byAndy(logs);
         LogParse.byPolina(logs);
+        // Below was implemented by candidate for Senior Engineer position
+        System.out.println(" Sergey Filipov: " + LogParse.groupByUser(logs));
     }
 
     private static void byOleg(List<String> logs) {
@@ -94,5 +96,33 @@ public class LogParse {
             }
         }
         System.out.println("Polina: " + map);
+    }
+
+    // Below was implemented by candidate for Senior Engineer position
+    private static Map<String, List<String>> groupByUser(List<String> logs) {
+        // parse logs, ts, userId, action
+        // group by userId, sort ts
+        // logEntry -> activity
+        Map<String, List<LogEntry>> logEntriesGrouped = logs.stream()
+                .map(LogEntry::parse)
+                .collect(Collectors.groupingBy(LogEntry::userId, Collectors.toList()));
+
+        for (Map.Entry<String, List<LogEntry>> logEntry : logEntriesGrouped.entrySet()) {
+            logEntry.getValue().sort(Comparator.comparing(LogEntry::ts));
+        }
+
+        return logEntriesGrouped.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
+                .map(LogEntry::activity)
+                .toList()));
+    }
+
+    public record LogEntry(LocalDateTime ts, String userId, String activity) {
+        public static LogEntry parse(String logEntry) {
+            if (logEntry == null) return null;
+            String[] fields = logEntry.split(",");
+            if (fields.length < 3) throw new IllegalArgumentException("not all fields provided");
+            LocalDateTime ts = LocalDateTime.parse(fields[0]);
+            return new LogEntry(ts, fields[1], fields[2]);
+        }
     }
 }
