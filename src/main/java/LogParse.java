@@ -28,21 +28,8 @@ import java.util.stream.Stream;
  * }
  */
 public class LogParse {
-    public static void main(String[] args) {
-        List<String> logs = Arrays.asList(
-                "2025-02-26T10:15:30,user123,LOGIN",
-                "2025-02-26T10:20:00,user456,PURCHASE",
-                "2025-02-26T10:18:00,user123,PURCHASE",
-                "2025-02-26T10:25:00,user123,LOGOUT"
-        );
-        LogParse.byOleg(logs);
-        LogParse.byAndy(logs);
-        LogParse.byPolina(logs);
-        // Below was implemented by candidate for Senior Engineer position
-        System.out.println(" Sergey Filipov: " + LogParse.groupByUser(logs));
-    }
 
-    private static void byOleg(List<String> logs) {
+    Map<String, List<String>> byOleg(List<String> logs) {
         Map<String, List<String>> actions = new LinkedHashMap<>();
         logs.stream()
                 .sorted(Comparator.comparing(o -> LocalDateTime.parse(o.split(",")[0])))
@@ -59,10 +46,10 @@ public class LogParse {
                         actions.put(parts[1], Collections.singletonList(parts[2]));
                     }
                 });
-        System.out.println("Oleg: " + actions);
+        return actions;
     }
 
-    private static void byAndy(List<String> logs) {
+    Map<String, List<String>> byAndy(List<String> logs) {
         record Row(LocalDateTime timestamp, String user, String action) {
             public static Row fromInput(String input) {
                 String[] parts = input.split(",");
@@ -75,10 +62,10 @@ public class LogParse {
                 .map(Row::fromInput)
                 .sorted(Comparator.comparing(Row::timestamp))
                 .forEach(r -> map.computeIfAbsent(r.user, k -> new ArrayList<>()).add(r.action));
-        System.out.println(" Andy: " + map);
+        return map;
     }
 
-    private static void byPolina(List<String> logs) {
+    Map<String, List<String>> byPolina(List<String> logs) {
 
         Map<String, List<String>> map = new HashMap<>();
         Collections.sort(logs);
@@ -95,11 +82,11 @@ public class LogParse {
                 map.put(user, actions);
             }
         }
-        System.out.println("Polina: " + map);
+        return map;
     }
 
     // Below was implemented by candidate for Senior Engineer position
-    private static Map<String, List<String>> groupByUser(List<String> logs) {
+    Map<String, List<String>> groupByUser(List<String> logs) {
         // parse logs, ts, userId, action
         // group by userId, sort ts
         // logEntry -> activity
