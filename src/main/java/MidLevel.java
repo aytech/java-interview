@@ -1,10 +1,8 @@
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 // https://codeinterview.io/blog/java-coding-interview-questions/
 public class MidLevel {
@@ -26,6 +24,7 @@ public class MidLevel {
      * - Solution:
      *      - add synchronized to the increment and count methods
      *      - wait for both threads to finish before printing the count
+     *      - See <a href="https://www.geeksforgeeks.org/synchronization-in-java/">...</a>
      */
     private static void midLevelQuestionOne() {
         Counter counter = new Counter();
@@ -79,6 +78,7 @@ public class MidLevel {
             System.out.println("ExecutionException: " + e.getMessage());
         }
         return null;
+        // 266 013 456 - fin urad.
     }
 
     private static void print(int a) {
